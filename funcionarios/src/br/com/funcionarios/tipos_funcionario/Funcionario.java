@@ -1,11 +1,12 @@
 package br.com.funcionarios.tipos_funcionario;
 
-public abstract class Funcionario {
+import br.com.funcionarios.interfaces.Calculadora;
+
+public abstract class Funcionario implements Calculadora {
 
     private String nome;
     private String matricula;
     private double salario;
-    private double imposto;
     private double gratificacao;
     private boolean admitido;
 
@@ -14,13 +15,24 @@ public abstract class Funcionario {
         this.matricula = matricula;
         this.salario = salario;
         admitido = true;
-        imposto = salario * 0.1;
     }
 
+    @Override
     public double calculaSalario() {
-        return salario - imposto + gratificacao;
+        return salario - getImposto() + getGratificacao();
     }
 
+    private double getImposto() {
+        return salario * 0.1;
+    }
+
+    private double getGratificacao() {
+        return salario * gratificacao;
+    }
+
+    protected void setGratificacao(double gratificacao) {
+        this.gratificacao = gratificacao;
+    }
 
     public String getNome() {
         return nome;
@@ -50,10 +62,6 @@ public abstract class Funcionario {
         this.admitido = admitido;
     }
 
-    public void setGratificacao(double gratificacao) {
-        this.gratificacao = gratificacao;
-    }
-
     @Override
     public String toString() {
         return "\nCargo: " + exibirCargo() +
@@ -68,8 +76,7 @@ public abstract class Funcionario {
         String cargo = getClass().getSimpleName();
         for(int i = 0; i < cargo.length(); i++) {
             if(i > 0 && Character.isUpperCase(cargo.charAt(i))) {
-                cargo = cargo.substring(0,i) + " " + cargo.substring(i);
-                break;
+                return cargo.substring(0,i) + " " + cargo.substring(i);
             }
         }
         return cargo;

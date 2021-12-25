@@ -1,5 +1,6 @@
 package br.com.funcionarios.utils;
 
+import br.com.funcionarios.enums.Empregado;
 import br.com.funcionarios.tipos_funcionario.Funcionario;
 
 import java.util.List;
@@ -13,23 +14,41 @@ public class Exibicao {
 
     public static String detalhesFuncionario(List<Funcionario> funcionarios) {
 
-        System.out.print("\nDigite a matrícula do funcionário" +
-                " ou 'sair' para voltar ao menu anterior: ");
-        String matricula = scanner.nextLine();
+        String resp = Atualizacao.localizar(funcionarios);
+        if(resp == null) {
+            return detalhesFuncionario(funcionarios);
+        }
+        int index = Integer.parseInt(resp);
+        if(index < 0) return "";
 
-        if(matricula.equalsIgnoreCase("sair")) return "";
+        System.out.println(funcionarios.get(index));
+        return "";
+    }
+
+    public static String listar(List<Funcionario> funcionarios, Empregado e) {
+
         boolean find = false;
         for(Funcionario f: funcionarios) {
-            if(f.getMatricula().equals(matricula)) {
-                System.out.println(f);
+            boolean imprimir = false;
+            if(e.equals(Empregado.TRABALHANDO) && f.isAdmitido()) {
+                imprimir = true;
+            }
+            else if(e.equals(Empregado.DEMITIDO) && !f.isAdmitido()) {
+                imprimir = true;
+            }
+            else if(e.equals(Empregado.TODOS)) {
+                imprimir = true;
+            }
+            if(imprimir) {
+                System.out.println("\nNome: " + f.getNome());
+                System.out.println("Matrícula: " + f.getMatricula());
                 find = true;
             }
         }
         if(!find) {
-            System.out.println("\nNão há nenhum funcionário " +
-                    "cadastrado com a matrícula informada!");
+            System.out.println("Não há registros que atendam a busca!");
         }
-        return detalhesFuncionario(funcionarios);
+        return "";
     }
 
 

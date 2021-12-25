@@ -35,15 +35,16 @@ public class GeradorFuncionario {
                 opcao = addFuncionario(funcionarios, GerenteGeral.class,
                         null,null,null);
                 break;
-            case 53: return "4";
+            case 53: return "";
             case 57:
                 System.out.println("Volte sempre! Até a proxima.");
                 return "9";
             default:
                 System.out.println("Opção inválida!");
+                return opcaoAddFUncionario(funcionarios);
         }
 
-        return opcaoAddFUncionario(funcionarios);
+        return "";
     }
 
 
@@ -67,7 +68,7 @@ public class GeradorFuncionario {
             else {
                 for(Funcionario f: funcionarios) {
                     if(f.getMatricula().equals(matricula)) {
-                        System.out.println("Já existe um funcionário com essa matrícula!");
+                        System.out.println("\nJá existe um funcionário com essa matrícula!");
                         matricula = null;
                     }
                 }
@@ -78,7 +79,7 @@ public class GeradorFuncionario {
             System.out.print("Informe o salário do funcionário: ");
             salario = scanner.nextLine();
             if(!salario.matches("\\d{1,10}(\\.\\d{1,2})?$")) {
-                System.out.println("O salário deve ser um número com no máximo 2 casas decimais!" +
+                System.out.println("\nO salário deve ser um número com no máximo 2 casas decimais!" +
                         "\nPor exemplo: 5555555555.22\nOutro exemplo: 10000");
                 return addFuncionario(funcionarios, classe, nome, matricula, null);
             }

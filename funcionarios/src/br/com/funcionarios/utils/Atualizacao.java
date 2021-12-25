@@ -19,7 +19,7 @@ public class Atualizacao {
         int i = Integer.parseInt(index);
         if(i < 0) return "";
         funcionarios.get(i).setAdmitido(false);
-        System.out.println("O funcionário foi demitido!");
+        System.out.println("\nO funcionário foi demitido!");
         return "";
     }
 
@@ -47,8 +47,9 @@ public class Atualizacao {
             if(!salario.matches("\\d{1,10}(\\.\\d{1,2})?$")) {
                 System.out.println("\nO salário deve ser um número com no máximo 2 casas decimais!" +
                         "\nPor exemplo: 5555555555.22\nOutro exemplo: 10000");
-                return atualizarFuncionario(funcionarios, index, nome, null);
+                salario = null;
             }
+            return atualizarFuncionario(funcionarios, index, nome, salario);
         }
         else if(!funcionarios.get(i).isAdmitido()) {
             System.out.println("\nDeseja admitir o funcionário: \n1- Sim\n2 - Não");
@@ -66,11 +67,12 @@ public class Atualizacao {
 
         funcionarios.get(i).setNome(nome);
         funcionarios.get(i).setSalario(Double.parseDouble(salario));
+        System.out.println("\nFuncionário atualizado com sucesso!");
         return "";
     }
 
 
-    private static String localizar(List<Funcionario> funcionarios) {
+    public static String localizar(List<Funcionario> funcionarios) {
 
         System.out.print("Digite a matrícula do funcionário" +
                 " ou 'sair' para voltar ao menu anterior: ");
