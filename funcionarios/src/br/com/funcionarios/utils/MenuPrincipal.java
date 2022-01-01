@@ -17,7 +17,7 @@ public class MenuPrincipal {
                 "\n2 - Ver detalhes de um funcionário\n3 - Demitir funcionário" +
                 "\n4 - Atualizar informações de um funcionário\n5 - Listar todos os funcionários" +
                 "\n6 - Listar somente os funcionários trabalhando" +
-                "\n7 - Listar somente os funcionários demitidos\n9 - Encerrar sessão");
+                "\n7 - Listar somente os funcionários demitidos\n8 - Encerrar sessão");
 
         String opcao = scanner.nextLine();
         switch (opcao.hashCode()) {
@@ -43,14 +43,14 @@ public class MenuPrincipal {
             case 55:
                 opcao = Exibicao.listar(funcionarios, Empregado.DEMITIDO);
                 break;
-            case 57:
+            case 56:
                 System.out.println("Volte sempre! Até a proxima.");
                 break;
             default:
                 System.out.println("Opção inválida!");
         }
 
-        return opcao.equals("9") ? "" : menu(funcionarios);
+        return opcao.equals("8") ? "" : menu(funcionarios);
     }
 
 }

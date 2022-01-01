@@ -14,7 +14,7 @@ public class GeradorFuncionario {
 
         System.out.println("\nEscolha uma opção:\n1 - Adicionar Colaborador" +
                 "\n2 - Adicionar Líder Técnico\n3 - Adicionar Gerente de Departamento" +
-                "\n4 - Adicionar Gerente Geral\n5 - Voltar ao menu principal\n9 - Encerrar a sessão");
+                "\n4 - Adicionar Gerente Geral\n5 - Voltar ao menu principal\n8 - Encerrar a sessão");
 
         String opcao = scanner.nextLine();
         switch (opcao.hashCode()) {
@@ -36,9 +36,9 @@ public class GeradorFuncionario {
                         null,null,null);
                 break;
             case 53: return "";
-            case 57:
+            case 56:
                 System.out.println("Volte sempre! Até a proxima.");
-                return "9";
+                return "8";
             default:
                 System.out.println("Opção inválida!");
                 return opcaoAddFUncionario(funcionarios);
