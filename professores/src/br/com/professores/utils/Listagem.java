@@ -15,13 +15,11 @@ public class Listagem {
 
 
     public static String listarTurmas(List<Turma> turmas) {
-        if(turmas.isEmpty()) System.out.println("\nNão há nenhuma turma cadastrada!");
         turmas.forEach(System.out::println);
         return "";
     }
 
     public static String listarDocentes(List<Docente> docentes) {
-        if(docentes.isEmpty()) System.out.println("\nNão há nenhum docente cadastrado!");
         docentes.forEach(System.out::println);
         return "";
     }
