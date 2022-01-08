@@ -13,9 +13,7 @@ public class Turma {
     private int quantidadeAlunos;
     private LocalDate dataInicio;
     private List<String> assuntos;
-    private List<Docente> professores;
-    private List<String> semanas;
-    private List<LocalDate> datas;
+    private List<Semana> semanas;
 
     public Turma(String identificacao, String nome,
                  int quantidadeAlunos, LocalDate dataInicio) {
@@ -24,9 +22,7 @@ public class Turma {
         this.nome = nome;
         this.quantidadeAlunos = quantidadeAlunos;
         this.dataInicio = dataInicio;
-        professores = new ArrayList<>();
         semanas = new ArrayList<>();
-        datas = new ArrayList<>();
         assuntos = List.of("Java","Java", "Java", "Java", "C#","C#","C#","C#","C","C","C","C",
                 "Python","Python","Python","Python","Javascript","Javascript",
                 "Javascript","Javascript","SQL","SQL","SQL","SQL","HTML","HTML","HTML","HTML",
@@ -52,24 +48,35 @@ public class Turma {
         return dataInicio;
     }
 
-    public List<Docente> getProfessores() {
-        return professores;
+    public List<Semana> getSemanas() {
+        return semanas;
     }
 
-    public List<LocalDate> getDatas() {
-        return datas;
-    }
-
-    public void addSemana(String semana) {
+    public void addSemana(Semana semana) {
         semanas.add(semana);
+        semana.setTurma(this);
     }
 
-    public void addData(LocalDate data) {
-        datas.add(data);
+    public Semana getSemana(int index) {
+        return semanas.get(index);
     }
 
-    public boolean addProfessor(Docente d) {
-        return professores.add(d);
+    public boolean definirDocente(Semana semana, Docente docente) {
+
+        int index = semanas.indexOf(semana);
+        boolean definido = false;
+        if(semana.getDocente1() != null && semana.getDocente2() != null) {
+            System.out.println("\nEssa semana já possui 02 professores alocados!");
+            return false;
+        }
+        else {
+            if(semana.getDocente1() == null) {
+                definido = semana.setDocente1(docente);
+            }
+            else definido = semana.setDocente2(docente);
+            if(definido) semanas.set(index, semana);
+        }
+        return definido;
     }
 
 
@@ -79,16 +86,10 @@ public class Turma {
                         "\nNome da turma: "+nome +
                         "\nQuantidade de alunos: "+quantidadeAlunos +
                         "\nData de início: "+ dataInicio.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +
-                        (professores.isEmpty() ? "" : "\nDocentes: \n\t" +
-                                "- Nome: "+ professores.get(0).getNome() + "\n\t- "+
-                                "Identificação: "+ professores.get(0).getIdentificacao()) +
-                        (professores.size() < 2 ? "" : "\n\n\t" +
-                                "- Nome: "+ professores.get(1).getNome() + "\n\t- "+
-                                "Identificação: "+ professores.get(1).getIdentificacao()) +
-                        "\n\nSemanas e assuntos: ";
+                        "\nAssuntos, docentes e semanas: ";
 
-        for(String semana : semanas) {
-            texto += "\n\t- "+ semana;
+        for(Semana semana : semanas) {
+            texto += semana;
         }
         return texto;
     }

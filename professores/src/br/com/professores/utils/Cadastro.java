@@ -1,6 +1,7 @@
 package br.com.professores.utils;
 
 import br.com.professores.tipos.Docente;
+import br.com.professores.tipos.Semana;
 import br.com.professores.tipos.Turma;
 
 import java.time.LocalDate;
@@ -78,12 +79,8 @@ public class Cadastro {
             LocalDate data = turma.getDataInicio().plusDays(dia);
             int diaSemana = data.getDayOfWeek().getValue();
             if((diaSemana == 1 && count < 52) || (dia == 0 && diaSemana <= 5)) {
-                String dia01 = data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                String dia05 = data.plusDays(5 - diaSemana)
-                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                turma.addSemana("'"+turma.getNome()+"' na semana do dia "+ dia01 + " até " +
-                        dia05 + " terá '"+turma.getAssuntos().get(count)+"'");
-                turma.addData(data);
+                Semana semana = new Semana(data, data.plusDays(5 - diaSemana), turma.getAssuntos().get(count));
+                turma.addSemana(semana);
                 count++;
             }
         }
@@ -123,11 +120,11 @@ public class Cadastro {
 
 
     public static String definirDocentes(List<Turma> turmas, List<Docente> docentes) {
-        return definirDocentes(turmas, docentes,null,null);
+        return definirDocentes(turmas, docentes,null,null,null,null);
     }
 
     private static String definirDocentes(List<Turma> turmas, List<Docente> docentes,
-                                          Turma turma, String idProf) {
+                                          Turma turma, Docente docente, String semana, Semana week) {
 
         if(turma == null) {
             System.out.print("Informe o identificador da turma ou 'sair' para voltar ao menu anterior: ");
@@ -135,64 +132,69 @@ public class Cadastro {
             if(idTurma.equalsIgnoreCase("sair")) return "";
             for(Turma t: turmas) {
                 if(t.getIdentificacao().equals(idTurma)) {
-                    if(t.getProfessores().size() == 2) {
-                        System.out.println("\nEssa turma já possui o máximo de 02 professores alocados!");
-                        t = null;
-                    }
-                    return definirDocentes(turmas, docentes, t,null);
+                    return definirDocentes(turmas, docentes, t,null,null,null);
                 }
             }
             System.out.println("\nNão há nenhuma turma cadastrada com o identificador informado!");
-            return definirDocentes(turmas, docentes,null,null);
+            return definirDocentes(turmas, docentes,null,null,null,null);
         }
-        else if(idProf == null) {
+        else if(docente == null) {
             System.out.print("Informe o identificador do docente ou 'sair' para voltar ao menu anterior: ");
-            idProf = scanner.nextLine();
-            if(idProf.equalsIgnoreCase("sair")) return "";
-            Docente docente = null;
-            for(Docente d: docentes) {
-                if(d.getIdentificacao().equals(idProf)) {
-                    if(d.getTurma() != null) {
-                        System.out.println("\nO docente '"+ d.getIdentificacao()+
-                                "' já está alocado em uma turma");
-                        return definirDocentes(turmas, docentes, turma,null);
-                    }
-                    docente = d;
-                    break;
+            String idProf = scanner.nextLine();
+            if (idProf.equalsIgnoreCase("sair")) return "";
+            for (Docente d : docentes) {
+                if (d.getIdentificacao().equals(idProf)) {
+                    return definirDocentes(turmas, docentes, turma, d,null,null);
                 }
             }
-            if(docente != null) {
-                int indexTurma = turmas.indexOf(turma);
-                int indexDocente = docentes.indexOf(docente);
-                boolean bool = addProfessor(turma, docente);
-                if(bool) {
-                    docentes.set(indexDocente, docente);
-                    turmas.set(indexTurma, turma);
-                    System.out.println("\nO docente '"+docente.getIdentificacao()+
-                            "' foi definido para a turma '"+ turma.getIdentificacao()+"'");
+            System.out.println("\nNão há nenhum docente cadastrado com o identificador informado!");
+            return definirDocentes(turmas, docentes, turma, null,null,null);
+        }
+        else if(semana == null) {
+            System.out.print("Informe o número da semana de 1 a 52 ou 'sair' para voltar ao menu anterior: ");
+            semana = scanner.nextLine();
+            if (semana.equalsIgnoreCase("sair")) return "";
+            if (!semana.matches("\\d{1,2}") || Integer.parseInt(semana) < 1 || Integer.parseInt(semana) > 52) {
+                System.out.println("\nValor inválido!");
+                return definirDocentes(turmas, docentes, turma, docente, null,null);
+            }
+            return definirDocentes(turmas, docentes, turma, docente, semana,null);
+        }
+        else if(week == null) {
+            int num = Integer.parseInt(semana);
+            week = turma.getSemana(num - 1);
+
+            String inicio = Semana.getDataFormatada(week.getInicio());
+            String fim = Semana.getDataFormatada(week.getFim());
+            System.out.print("\nInício da semana: "+inicio + "\nFim da semana: "+fim +
+                                "\nAssunto: "+week.getAssunto() +"\n\nConfirmar semana (s/n): ");
+
+            String confirma = scanner.nextLine();
+            if(!confirma.equalsIgnoreCase("s")) {
+                if(!confirma.equalsIgnoreCase("n")) {
+                    System.out.println("\nOpção inválida!");
+                    return definirDocentes(turmas, docentes, turma, docente, semana,null);
                 }
-                return "";
+                return definirDocentes(turmas, docentes, turma, docente,null,null);
             }
 
-        }
-        System.out.println("\nNão há nenhum docente cadastrado com o identificador informado!");
-        return definirDocentes(turmas, docentes, turma,null);
-    }
-
-
-    public static boolean addProfessor(Turma t, Docente d) {
-        if(t.getProfessores().size() < 2) {
-            if (d.getTurma() != null && d.getTurma().equals(t)) {
-                System.out.println("\nA turma '"+t.getIdentificacao()+
-                        "' já contém o professor '"+d.getIdentificacao()+"'");
-                return false;
+            if(week.contemDocente(docente)) {
+                System.out.println("\nO docente informado já está alocado nessa semana!");
+                return definirDocentes(turmas, docentes, turma, docente,null,null);
             }
-            d.setTurma(t);
-            return t.addProfessor(d);
+            int indexDocente = docentes.indexOf(docente);
+            int indexTurma = turmas.indexOf(turma);
+            boolean definido = turma.definirDocente(week, docente);
+            if(!definido) {
+                return definirDocentes(turmas, docentes, turma, docente,null,null);
+            }
+            docentes.set(indexDocente, docente);
+            turmas.set(indexTurma, turma);
+            System.out.println("\nO docente " + docente.getIdentificacao() +
+                                " foi definido para a turma " + turma.getIdentificacao());
         }
-        else System.out.println("\nOperação inválida!\nA turma "+
-                t.getIdentificacao()+ " já possui 02 professores!");
-        return false;
+
+        return "";
     }
 
 }
